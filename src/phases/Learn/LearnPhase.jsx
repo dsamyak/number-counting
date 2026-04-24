@@ -1,68 +1,12 @@
 import React, { useState } from 'react';
 import { useLesson } from '../../context/LessonContext';
 import { CheckCircle, Lock, Play } from 'lucide-react';
-
-// Placeholders for actual simulation components
-const Module1 = ({ onComplete }) => (
-  <div className="p-8 text-center bg-white rounded-2xl shadow-lg border border-gray-100">
-    <h2 className="text-3xl font-heading text-primary mb-4">Count to 10!</h2>
-    <div className="flex gap-2 justify-center my-8 text-4xl">🍎 🍎 🍎</div>
-    <p className="text-gray-600 mb-6">Let's warm up by counting to ten.</p>
-    <button onClick={onComplete} className="px-8 py-3 bg-green-500 text-white rounded-full font-bold shadow-md hover:bg-green-600 transition">
-      Finish Module
-    </button>
-  </div>
-);
-
-const Module2 = ({ onComplete }) => (
-  <div className="p-8 text-center bg-white rounded-2xl shadow-lg border border-gray-100">
-    <h2 className="text-3xl font-heading text-primary mb-4">Numbers 11 to 40</h2>
-    <p className="text-gray-600 mb-6">Learn about ten frames!</p>
-    <button onClick={onComplete} className="px-8 py-3 bg-green-500 text-white rounded-full font-bold shadow-md hover:bg-green-600 transition">
-      Finish Module
-    </button>
-  </div>
-);
-
-const Module3 = ({ onComplete }) => (
-  <div className="p-8 text-center bg-white rounded-2xl shadow-lg border border-gray-100">
-    <h2 className="text-3xl font-heading text-primary mb-4">Numbers 41 to 100</h2>
-    <p className="text-gray-600 mb-6">Explore the hundred chart!</p>
-    <button onClick={onComplete} className="px-8 py-3 bg-green-500 text-white rounded-full font-bold shadow-md hover:bg-green-600 transition">
-      Finish Module
-    </button>
-  </div>
-);
-
-const Module4 = ({ onComplete }) => (
-  <div className="p-8 text-center bg-white rounded-2xl shadow-lg border border-gray-100">
-    <h2 className="text-3xl font-heading text-primary mb-4">Place Value (Tens & Ones)</h2>
-    <p className="text-gray-600 mb-6">Build numbers with blocks!</p>
-    <button onClick={onComplete} className="px-8 py-3 bg-green-500 text-white rounded-full font-bold shadow-md hover:bg-green-600 transition">
-      Finish Module
-    </button>
-  </div>
-);
-
-const Module5 = ({ onComplete }) => (
-  <div className="p-8 text-center bg-white rounded-2xl shadow-lg border border-gray-100">
-    <h2 className="text-3xl font-heading text-primary mb-4">Number Patterns</h2>
-    <p className="text-gray-600 mb-6">Skip counting by 2s, 5s, and 10s!</p>
-    <button onClick={onComplete} className="px-8 py-3 bg-green-500 text-white rounded-full font-bold shadow-md hover:bg-green-600 transition">
-      Finish Module
-    </button>
-  </div>
-);
-
-const MiniQuiz = ({ onComplete }) => (
-  <div className="p-8 text-center bg-white rounded-2xl shadow-lg border-4 border-yellow-400">
-    <h2 className="text-3xl font-heading text-yellow-600 mb-4">Mini-Quiz Checkpoint</h2>
-    <p className="text-gray-600 mb-6">Let's see what you've learned!</p>
-    <button onClick={() => onComplete(5)} className="px-8 py-3 bg-yellow-500 text-white rounded-full font-bold shadow-md hover:bg-yellow-600 transition">
-      Pass Quiz (Dev)
-    </button>
-  </div>
-);
+import Module1 from './Module1';
+import Module2 from './Module2';
+import Module3 from './Module3';
+import Module4 from './Module4';
+import Module5 from './Module5';
+import MiniQuiz from './MiniQuiz';
 
 export default function LearnPhase() {
   const { state, dispatch } = useLesson();
