@@ -1,76 +1,142 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Paintbrush, Check } from 'lucide-react';
 
 export default function Module3({ onComplete }) {
-  const [revealed, setRevealed] = useState(40);
-  const [skipMode, setSkipMode] = useState(false);
+  const [task, setTask] = useState(0); // 0: find 10s, 1: find numbers ending in 5, 2: complete
+  const [paintedCells, setPaintedCells] = useState([]);
+
+  const tasks = [
+    {
+      title: "Paint the Tens!",
+      instruction: "Find and paint all numbers that end in 0 (10, 20, 30...)",
+      check: (num) => num % 10 === 0,
+      color: "bg-blue-400 text-blue-900 border-blue-500",
+      targetCount: 10
+    },
+    {
+      title: "Paint the Fives!",
+      instruction: "Now find and paint all numbers that end in 5 (5, 15, 25...)",
+      check: (num) => num % 10 === 5,
+      color: "bg-green-400 text-green-900 border-green-500",
+      targetCount: 20 // includes previous 10
+    }
+  ];
 
   const handleCellClick = (num) => {
-    if (num === revealed + 1) {
-      setRevealed(num);
+    if (task >= tasks.length) return;
+    
+    const currentTask = tasks[task];
+    
+    // Allow painting if it's correct for current task, or keep previously painted
+    if (currentTask.check(num) && !paintedCells.includes(num)) {
+      const newPainted = [...paintedCells, num];
+      setPaintedCells(newPainted);
+      
+      if (newPainted.length === currentTask.targetCount) {
+        setTimeout(() => setTask(t => t + 1), 1500);
+      }
     }
   };
 
-  const handleRevealAll = () => {
-    setRevealed(100);
-  };
-
   return (
-    <div className="p-4 md:p-8 flex flex-col items-center bg-white rounded-3xl shadow-xl w-full max-w-4xl border-4 border-blue-100">
-      <h2 className="text-3xl md:text-4xl font-heading text-primary mb-2 text-center">Numbers 41 to 100</h2>
-      <p className="text-gray-600 mb-4 text-center text-lg">Tap the next number or reveal them all!</p>
+    <div className="p-4 md:p-8 flex flex-col items-center bg-gray-900 rounded-3xl shadow-2xl w-full max-w-5xl border-4 border-gray-700 overflow-hidden relative text-white">
       
-      <div className="flex gap-4 mb-6">
-        <button 
-          onClick={handleRevealAll}
-          disabled={revealed === 100}
-          className="px-6 py-2 bg-blue-500 text-white rounded-full font-bold shadow hover:bg-blue-600 disabled:opacity-50 transition"
-        >
-          Reveal All
-        </button>
-        <button 
-          onClick={() => setSkipMode(!skipMode)}
-          className={`px-6 py-2 rounded-full font-bold shadow transition ${skipMode ? 'bg-yellow-400 text-yellow-900' : 'bg-gray-200 text-gray-700'}`}
-        >
-          Highlight 10s
-        </button>
+      {/* Header Info */}
+      <div className="w-full flex flex-col items-center text-center mb-6">
+        <h2 className="text-3xl md:text-5xl font-heading text-yellow-300 drop-shadow-lg mb-2">
+          The Magic Hundred Chart
+        </h2>
+        
+        <AnimatePresence mode="wait">
+          {task < tasks.length ? (
+            <motion.div 
+              key={task}
+              initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 20, opacity: 0 }}
+              className="bg-gray-800 p-4 rounded-xl border border-gray-600 mt-2 flex items-center gap-4"
+            >
+              <div className="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center text-yellow-400">
+                <Paintbrush size={24} />
+              </div>
+              <div className="text-left">
+                <p className="text-xl font-bold text-gray-100">{tasks[task].title}</p>
+                <p className="text-gray-400">{tasks[task].instruction}</p>
+              </div>
+              <div className="text-3xl font-bold text-gray-500 ml-4">
+                {paintedCells.length} / {tasks[task].targetCount}
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div 
+              key="complete"
+              initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
+              className="bg-green-900/50 p-4 rounded-xl border border-green-500 mt-2"
+            >
+              <p className="text-2xl font-bold text-green-400">Chart Master!</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
-      <div className="grid grid-cols-10 gap-1 md:gap-2 mb-8 w-full max-w-2xl">
+      {/* Grid */}
+      <div className="grid grid-cols-10 gap-1 md:gap-2 mb-8 w-full max-w-3xl bg-gray-800 p-2 md:p-4 rounded-2xl border border-gray-700 shadow-inner">
         {Array.from({ length: 100 }).map((_, i) => {
           const num = i + 1;
-          const isRevealed = num <= revealed;
-          const isNext = num === revealed + 1;
-          const isSkip = skipMode && num % 10 === 0 && isRevealed;
+          const isPainted = paintedCells.includes(num);
+          
+          // Determine color based on what painted it
+          let cellClass = "bg-gray-700 text-gray-400 hover:bg-gray-600 border-gray-600";
+          if (isPainted) {
+            if (num % 10 === 0) cellClass = tasks[0].color;
+            if (num % 10 === 5) cellClass = tasks[1].color;
+          }
 
           return (
-            <motion.div 
+            <motion.button 
               key={num}
-              whileTap={{ scale: 0.9 }}
+              whileTap={{ scale: 0.8 }}
               onClick={() => handleCellClick(num)}
+              disabled={task >= tasks.length}
               className={`
-                aspect-square flex items-center justify-center rounded-md font-bold text-sm md:text-xl cursor-pointer select-none transition-colors
-                ${isRevealed ? (isSkip ? 'bg-yellow-400 text-yellow-900 border-2 border-yellow-500' : 'bg-blue-100 text-blue-800 border border-blue-200') : 'bg-gray-50 text-gray-300 border border-gray-100'}
-                ${isNext ? 'ring-4 ring-green-400 animate-pulse bg-green-50' : ''}
+                aspect-square flex flex-col items-center justify-center rounded-md md:rounded-xl font-bold text-xs md:text-xl md:border-b-4 transition-colors relative overflow-hidden group
+                ${cellClass}
               `}
             >
-              {num}
-            </motion.div>
+              <span className="z-10">{num}</span>
+              {isPainted && (
+                <motion.div 
+                  initial={{ scale: 0 }} animate={{ scale: 1 }} 
+                  className="absolute inset-0 bg-white/20"
+                />
+              )}
+            </motion.button>
           );
         })}
       </div>
 
-      {revealed === 100 && (
-        <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="flex flex-col items-center">
-          <p className="text-2xl text-green-500 font-bold mb-4">You revealed the Hundred Chart!</p>
-          <button 
-            onClick={onComplete}
-            className="px-10 py-4 bg-green-500 hover:bg-green-600 text-white rounded-full font-bold shadow-lg text-xl transition hover:scale-105"
+      {/* Completion Overlay */}
+      <AnimatePresence>
+        {task >= tasks.length && (
+          <motion.div 
+            initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col items-center bg-gray-800/90 backdrop-blur p-8 rounded-3xl border border-gray-600 shadow-[0_0_50px_rgba(0,0,0,0.5)] absolute bottom-8 z-20"
           >
-            Finish Module
-          </button>
-        </motion.div>
-      )}
+            <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(34,197,94,0.6)] text-white">
+              <Check size={48} strokeWidth={4} />
+            </div>
+            <h3 className="text-3xl font-bold text-white mb-2">Beautiful Patterns!</h3>
+            <p className="text-gray-300 mb-8 max-w-md text-center">
+              Notice how all the numbers ending in 0 and 5 make straight lines straight down the chart? That's the secret of the Hundred Chart!
+            </p>
+            <button 
+              onClick={onComplete}
+              className="px-12 py-4 bg-yellow-500 hover:bg-yellow-400 text-yellow-900 rounded-full font-black text-xl shadow-lg transition hover:scale-105"
+            >
+              Next Module 🚀
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
