@@ -54,6 +54,11 @@ function lessonReducer(state, action) {
         ...state,
         phase: action.payload.phase,
       };
+    case 'GO_HOME':
+      return {
+        ...state,
+        phase: 'welcome',
+      };
     case 'LOAD_QUESTIONS':
       return {
         ...state,
@@ -158,6 +163,8 @@ function lessonReducer(state, action) {
     }
     case 'LOAD_STATE':
       return action.payload;
+    case 'FULL_RESET':
+      return initialState;
     default:
       return state;
   }
@@ -173,7 +180,10 @@ export function LessonProvider({ children }) {
     const saved = localStorage.getItem('countingTo100State');
     if (saved) {
       try {
-        dispatch({ type: 'LOAD_STATE', payload: JSON.parse(saved) });
+        const parsed = JSON.parse(saved);
+        // Always ensure initial load goes to welcome screen
+        parsed.phase = 'welcome';
+        dispatch({ type: 'LOAD_STATE', payload: parsed });
       } catch (e) {
         console.error('Failed to parse saved state', e);
       }
