@@ -162,20 +162,18 @@ export default function WelcomeScreen() {
             {hasProgress ? 'Continue Learning' : 'Start Learning'}
           </motion.button>
 
-          {prog.miniQuizPassed && (
-            <motion.button
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 }}
-              whileHover={{ scale: 1.05, y: -2 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => dispatch({ type: 'SET_PHASE', payload: { phase: 'practice' } })}
-              className="flex-1 flex items-center justify-center gap-3 px-8 py-5 bg-gradient-to-r from-green-400 to-emerald-500 text-white text-xl font-black rounded-2xl shadow-2xl shadow-green-500/30 hover:shadow-green-500/50 transition-all duration-300 border-b-4 border-green-600 active:border-b-0 active:translate-y-1"
-            >
-              <Gamepad2 size={24} />
-              Practice
-            </motion.button>
-          )}
+          <motion.button
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => dispatch({ type: 'SET_PHASE', payload: { phase: 'practice' } })}
+            className="flex-1 flex items-center justify-center gap-3 px-8 py-5 bg-gradient-to-r from-green-400 to-emerald-500 text-white text-xl font-black rounded-2xl shadow-2xl shadow-green-500/30 hover:shadow-green-500/50 transition-all duration-300 border-b-4 border-green-600 active:border-b-0 active:translate-y-1"
+          >
+            <Gamepad2 size={24} />
+            Practice
+          </motion.button>
         </div>
 
         {/* Feature cards */}
